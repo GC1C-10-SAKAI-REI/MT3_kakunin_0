@@ -7,7 +7,7 @@
 #include <assert.h>
 #include "Struct.h"
 
-const char kWindowTitle[] = "GC1C_10_サカイレイ";
+const char kWindowTitle[] = "GC2C_07_サカイレイ";
 
 //行の間隔
 static const int rowHeight = 20;
