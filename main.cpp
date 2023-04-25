@@ -7,7 +7,7 @@
 #include <assert.h>
 #include "Struct.h"
 
-const char kWindowTitle[] = "GC1C_10_サカイレイ";
+const char kWindowTitle[] = "GC2C_07_サカイレイ";
 
 //2x2行列
 typedef struct Matrix2x2
@@ -20,6 +20,10 @@ typedef struct Matrix3x3
 	float m[3][3];
 };
 
+//行の間隔
+static const int rowHeight = 20;
+//列の間隔
+static const int columnWidth = 60;
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
