@@ -261,10 +261,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		MatrixScreenPrintf(0, rowHeight * 5, resultSub, "Subtract");
 		MatrixScreenPrintf(0, rowHeight * 5 * 2, resultMul, "Multiply");
 		MatrixScreenPrintf(0, rowHeight * 5 * 3, inverssM1, "InverseM1");
-		MatrixScreenPrintf(0, rowHeight * 5 * 4, inverssM2, "InverseM2");
+		/*MatrixScreenPrintf(0, rowHeight * 5 * 4, inverssM2, "InverseM2");
 		MatrixScreenPrintf(columnWidth * 5, 0, transposeM1, "transposeM1");
 		MatrixScreenPrintf(columnWidth * 5, rowHeight * 5, transposeM2, "transposeM2");
-		MatrixScreenPrintf(columnWidth * 5, rowHeight * 5 * 2, identify, "identify");
+		MatrixScreenPrintf(columnWidth * 5, rowHeight * 5 * 2, identify, "identify");*/
 
 		/// ↑描画処理ここまで
 
