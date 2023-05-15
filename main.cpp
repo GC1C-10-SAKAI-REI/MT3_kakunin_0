@@ -55,7 +55,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		2.0f,2.0f,1.0f,3.0f
 	};
 
-	//Vec3 transformed = Transform(point, transformMatrix);
+	Vec3 transformed = Transform(point, transformMatrix);
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0)
@@ -77,7 +77,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		/// ↓描画処理ここから
 
-		MatrixScreenPrintf(0, 0, translateMatrix, "translateMatrix");
+		VectorScreenPrintf(0, 0, transformed, "transformed");
+		MatrixScreenPrintf(0, 20, translateMatrix, "translateMatrix");
 		MatrixScreenPrintf(0, rowHeight * 5, scaleMatrix, "scaleMatrix");
 
 		/// ↑描画処理ここまで
@@ -148,7 +149,20 @@ Matrix4x4 MakeScaleMatrix(const Vec3 &scale)
 
 Vec3 Transform(const Vec3& vector, const Matrix4x4& matrix)
 {
-	return Vec3();
+	Vec3 result;
+
+	result.X = (vector.X * matrix.m[0][0]) + (vector.Y * matrix.m[1][0]) + (vector.Z * matrix.m[2][0]) + matrix.m[3][0];
+	result.Y = (vector.X * matrix.m[0][1]) + (vector.Y * matrix.m[1][1]) + (vector.Z * matrix.m[2][1]) + matrix.m[3][1];
+	result.Z = (vector.X * matrix.m[0][2]) + (vector.Y * matrix.m[1][2]) + (vector.Z * matrix.m[2][2]) + matrix.m[3][2];
+
+	float w = (vector.X * matrix.m[0][3]) + (vector.Y * matrix.m[1][3]) + (vector.Z * matrix.m[2][3]) + matrix.m[3][3];
+	assert(w != 0.0f);
+
+	result.X /= w;
+	result.Y /= w;
+	result.Z /= w;
+
+	return result;
 }
 
 void MatrixScreenPrintf(int x, int y, const Matrix4x4 &matrix, const char *label)
