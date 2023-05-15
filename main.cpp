@@ -29,6 +29,8 @@ Vec3 Transform(const Vec3 &vector, const Matrix4x4 &matrix);
 
 //行列表示関数
 void MatrixScreenPrintf(int x, int y, const Matrix4x4 &matrix, const char *label);
+//ベクトル表示
+void VectorScreenPrintf(int x, int y, const Vec3 &vector, const char *label);
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
@@ -75,7 +77,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		/// ↓描画処理ここから
 
-
+		MatrixScreenPrintf(0, 0, translateMatrix, "translateMatrix");
+		MatrixScreenPrintf(0, rowHeight * 5, scaleMatrix, "scaleMatrix");
 
 		/// ↑描画処理ここまで
 
@@ -91,6 +94,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	}
 	// ライブラリの終了
 	Novice::Finalize();
+
 	return 0;
 }
 
@@ -158,3 +162,11 @@ void MatrixScreenPrintf(int x, int y, const Matrix4x4 &matrix, const char *label
 		}
 	}
 }
+
+void VectorScreenPrintf(int x, int y, const Vec3& vector, const char* label)
+{
+	Novice::ScreenPrintf(x, y, "%0.2f", vector.X);
+	Novice::ScreenPrintf(x + columnWidth, y, "%0.2f", vector.Y);
+	Novice::ScreenPrintf(x + columnWidth * 2, y, "%0.2f", vector.Z);
+	Novice::ScreenPrintf(x + columnWidth * 3, y, "%s", label);
+};
