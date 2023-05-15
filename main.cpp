@@ -9,15 +9,10 @@
 
 const char kWindowTitle[] = "GC2C_07_サカイレイ";
 
-//2x2行列
-typedef struct Matrix2x2
+//4x4行列
+typedef struct Matrix4x4
 {
-	float m[2][2];
-};
-//3x3行列
-typedef struct Matrix3x3
-{
-	float m[3][3];
+	float m[4][4];
 };
 
 //行の間隔
