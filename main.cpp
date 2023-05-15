@@ -27,6 +27,9 @@ Matrix4x4 MakeScaleMatrix(const Vec3 &scale);
 //3.座標返還
 Vec3 Transform(const Vec3 &vector, const Matrix4x4 &matrix);
 
+//行列表示関数
+void MatrixScreenPrintf(int x, int y, const Matrix4x4 &matrix, const char *label);
+
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
@@ -142,4 +145,16 @@ Matrix4x4 MakeScaleMatrix(const Vec3 &scale)
 Vec3 Transform(const Vec3& vector, const Matrix4x4& matrix)
 {
 	return Vec3();
+}
+
+void MatrixScreenPrintf(int x, int y, const Matrix4x4 &matrix, const char *label)
+{
+	Novice::ScreenPrintf(x, y, "%s", label);
+	for (int row = 0; row < 4; ++row)
+	{
+		for (int column = 0; column < 4; ++column)
+		{
+			Novice::ScreenPrintf(x + column * columnWidth, (y + 20) + row * rowHeight, "%6.02f", matrix.m[row][column]);
+		}
+	}
 }
