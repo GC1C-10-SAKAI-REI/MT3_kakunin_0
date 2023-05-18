@@ -19,6 +19,10 @@ typedef struct Matrix4x4
 static const int rowHeight = 20;
 //列の間隔
 static const int columnWidth = 60;
+//行列表示関数
+void MatrixScreenPrintf(int x, int y, const Matrix4x4& matrix, const char* label);
+//ベクトル表示関数
+void VectorScreenPrintf(int x, int y, const Vec3& vector, const char* label);
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
@@ -68,3 +72,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	Novice::Finalize();
 	return 0;
 }
+
+void MatrixScreenPrintf(int x, int y, const Matrix4x4& matrix, const char* label)
+{
+	Novice::ScreenPrintf(x, y, "%s", label);
+	for (int row = 0; row < 4; ++row)
+	{
+		for (int column = 0; column < 4; ++column)
+		{
+			Novice::ScreenPrintf(x + column * columnWidth, (y + 20) + row * rowHeight, "%6.02f", matrix.m[row][column]);
+		}
+	}
+}
+
+void VectorScreenPrintf(int x, int y, const Vec3& vector, const char* label)
+{
+	Novice::ScreenPrintf(x, y, "%0.2f", vector.X);
+	Novice::ScreenPrintf(x + columnWidth, y, "%0.2f", vector.Y);
+	Novice::ScreenPrintf(x + columnWidth * 2, y, "%0.2f", vector.Z);
+	Novice::ScreenPrintf(x + columnWidth * 3, y, "%s", label);
+};
