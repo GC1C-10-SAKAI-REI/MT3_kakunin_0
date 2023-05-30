@@ -3,7 +3,7 @@
 #define WINDOW_HEIGHT 720//ウィンドウの高さ
 
 #include <Novice.h>
-#include <math.h>
+#include <cmath>
 #include <assert.h>
 #include "Struct.h"
 
@@ -20,12 +20,12 @@ static const int rowHeight = 20;
 //列の間隔
 static const int columnWidth = 60;
 
-//1.平行移動行列
-Matrix4x4 MakeTranslateMatrix(const Vec3 &translate);
-//2.拡大縮小行列
-Matrix4x4 MakeScaleMatrix(const Vec3 &scale);
-//3.座標返還
-Vec3 Transform(const Vec3 &vector, const Matrix4x4 &matrix);
+//1.x軸回転行列
+Matrix4x4 MakeRotateXMatrix(float rad);
+//2.y軸回転行列
+Matrix4x4 MakeRotateYMatrix(float rad);
+//3.z軸回転行列
+Matrix4x4 MakeRotateZMatrix(float rad);
 
 //行列表示関数
 void MatrixScreenPrintf(int x, int y, const Matrix4x4 &matrix, const char *label);
@@ -42,20 +42,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	char keys[256] = { 0 };
 	char preKeys[256] = { 0 };
 
-	Vec3 translate{ 4.1f,2.6f,0.8f };
-	Vec3 scale{ 1.5f,5.2f,7.3f };
-	Matrix4x4 translateMatrix = MakeTranslateMatrix(translate);
-	Matrix4x4 scaleMatrix = MakeScaleMatrix(scale);
-	Vec3 point{ 2.3f,3.8f,1.4f };
-	Matrix4x4 transformMatrix =
-	{
-		1.0f,2.0f,3.0f,4.0f,
-		3.0f,1.0f,1.0f,2.0f,
-		1.0f,4.0f,2.0f,3.0f,
-		2.0f,2.0f,1.0f,3.0f
-	};
+	Vec3 rotate{ 0.4f,1.43f,-0.8f };
 
-	Vec3 transformed = Transform(point, transformMatrix);
+	Matrix4x4 rotateXMatrix = MakeRotateXMatrix(rotate.X);
+	Matrix4x4 rotateYMatrix = MakeRotateXMatrix(rotate.Y);
+	Matrix4x4 rotateZMatrix = MakeRotateXMatrix(rotate.Z);
+	//Matrix4x4 rotateXYZMatrix = 	
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0)
@@ -77,9 +69,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		/// ↓描画処理ここから
 
-		VectorScreenPrintf(0, 0, transformed, "transformed");
-		MatrixScreenPrintf(0, 20, translateMatrix, "translateMatrix");
-		MatrixScreenPrintf(0, rowHeight * 6, scaleMatrix, "scaleMatrix");
+		MatrixScreenPrintf(0, 0, rotateXMatrix, "rotateXMatrix");
+		MatrixScreenPrintf(0, rowHeight * 5, rotateYMatrix, "rotateYMatrix");
+		MatrixScreenPrintf(0, rowHeight * 5, rotateZMatrix, "rotateZMatrix");
+		//MatrixScreenPrintf(0, rowHeight * 5, rotateXYZMatrix, "rotateXYZMatrix");
 
 		/// ↑描画処理ここまで
 
@@ -99,70 +92,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	return 0;
 }
 
-Matrix4x4 MakeTranslateMatrix(const Vec3 &translate)
+Matrix4x4 MakeRotateXMatrix(float rad)
 {
-	Matrix4x4 result;
-
-	result.m[0][0] = 1;
-	result.m[0][1] = 0;
-	result.m[0][2] = 0;
-	result.m[0][3] = 0;
-	result.m[1][0] = 0;
-	result.m[1][1] = 1;
-	result.m[1][2] = 0;
-	result.m[1][3] = 0;
-	result.m[2][0] = 0;
-	result.m[2][1] = 0;
-	result.m[2][2] = 1;
-	result.m[2][3] = 0;
-	result.m[3][0] = translate.X;
-	result.m[3][1] = translate.Y;
-	result.m[3][2] = translate.Z;
-	result.m[3][3] = 1;
-
-	return result;
+	return Matrix4x4();
 }
 
-Matrix4x4 MakeScaleMatrix(const Vec3 &scale)
+Matrix4x4 MakeRotateYMatrix(float rad)
 {
-	Matrix4x4 result;
-
-	result.m[0][0] = scale.X;
-	result.m[0][1] = 0;
-	result.m[0][2] = 0;
-	result.m[0][3] = 0;
-	result.m[1][0] = 0;
-	result.m[1][1] = scale.Y;
-	result.m[1][2] = 0;
-	result.m[1][3] = 0;
-	result.m[2][0] = 0;
-	result.m[2][1] = 0;
-	result.m[2][2] = scale.Z;
-	result.m[2][3] = 0;
-	result.m[3][0] = 0;
-	result.m[3][1] = 0;
-	result.m[3][2] = 0;
-	result.m[3][3] = 1;
-
-	return result;
+	return Matrix4x4();
 }
 
-Vec3 Transform(const Vec3& vector, const Matrix4x4& matrix)
+Matrix4x4 MakeRotateZMatrix(float rad)
 {
-	Vec3 result;
-
-	result.X = (vector.X * matrix.m[0][0]) + (vector.Y * matrix.m[1][0]) + (vector.Z * matrix.m[2][0]) + matrix.m[3][0];
-	result.Y = (vector.X * matrix.m[0][1]) + (vector.Y * matrix.m[1][1]) + (vector.Z * matrix.m[2][1]) + matrix.m[3][1];
-	result.Z = (vector.X * matrix.m[0][2]) + (vector.Y * matrix.m[1][2]) + (vector.Z * matrix.m[2][2]) + matrix.m[3][2];
-
-	float w = (vector.X * matrix.m[0][3]) + (vector.Y * matrix.m[1][3]) + (vector.Z * matrix.m[2][3]) + matrix.m[3][3];
-	assert(w != 0.0f);
-
-	result.X /= w;
-	result.Y /= w;
-	result.Z /= w;
-
-	return result;
+	return Matrix4x4();
 }
 
 void MatrixScreenPrintf(int x, int y, const Matrix4x4 &matrix, const char *label)
