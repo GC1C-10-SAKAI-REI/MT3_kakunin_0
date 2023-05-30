@@ -3,9 +3,11 @@
 #define WINDOW_HEIGHT 720//ウィンドウの高さ
 
 #include <Novice.h>
-#include <math.h>
+#include <cmath>
 #include <assert.h>
 #include "Struct.h"
+
+using namespace std;
 
 const char kWindowTitle[] = "GC2C_07_サカイレイ";
 
@@ -20,12 +22,6 @@ static const int rowHeight = 20;
 //列の間隔
 static const int columnWidth = 60;
 
-//平行移動行列
-Matrix4x4 MakeTranslateMatrix(const Vec3 &translate);
-//拡大縮小行列
-Matrix4x4 MakeScaleMatrix(const Vec3 &scale);
-//座標返還
-Vec3 Transform(const Vec3 &vector, const Matrix4x4 &matrix);
 //X軸回転
 Matrix4x4 MakeRotateXMatrix(float rad);
 //Y軸回転
@@ -54,12 +50,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	Vec3 scale{ 1.2f,0.79f,-2.1f };
 	Vec3 rotate{ 0.4f,1.43f,-0.8f };
-	Vec3 translate{ 4.1f,2.6f,0.8f };
+	Vec3 translate{ 2.7f,-4.15f,1.57f };
 	
+	/*Matrix4x4 scaleMatrix = MakeScaleMatrix(scale);
+	Matrix4x4 translateMatrix = MakeTranslateMatrix(translate);*/
 	Matrix4x4 rotateXMatrix = MakeRotateXMatrix(rotate.X);
 	Matrix4x4 rotateYMatrix = MakeRotateYMatrix(rotate.Y);
 	Matrix4x4 rotateZMatrix = MakeRotateZMatrix(rotate.Z);
-	//Matrix4x4 rotateXYZMatrix = 
+	Matrix4x4 rotateXYZMatrix = Multiply(rotateXMatrix, Multiply(rotateYMatrix, rotateZMatrix));
+	Matrix4x4 worldMatrix = MakeAffineMatrix(scale, rotateXYZMatrix, translate);
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0)
@@ -81,7 +80,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		/// ↓描画処理ここから
 
-		
+		MatrixScreenPrintf(0, 0, worldMatrix, "worldMatrix");
 
 		/// ↑描画処理ここまで
 
@@ -99,54 +98,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	Novice::Finalize();
 
 	return 0;
-}
-
-Matrix4x4 MakeTranslateMatrix(const Vec3 &translate)
-{
-	Matrix4x4 result;
-
-	result.m[0][0] = 1;
-	result.m[0][1] = 0;
-	result.m[0][2] = 0;
-	result.m[0][3] = 0;
-	result.m[1][0] = 0;
-	result.m[1][1] = 1;
-	result.m[1][2] = 0;
-	result.m[1][3] = 0;
-	result.m[2][0] = 0;
-	result.m[2][1] = 0;
-	result.m[2][2] = 1;
-	result.m[2][3] = 0;
-	result.m[3][0] = translate.X;
-	result.m[3][1] = translate.Y;
-	result.m[3][2] = translate.Z;
-	result.m[3][3] = 1;
-
-	return result;
-}
-
-Matrix4x4 MakeScaleMatrix(const Vec3 &scale)
-{
-	Matrix4x4 result;
-
-	result.m[0][0] = scale.X;
-	result.m[0][1] = 0;
-	result.m[0][2] = 0;
-	result.m[0][3] = 0;
-	result.m[1][0] = 0;
-	result.m[1][1] = scale.Y;
-	result.m[1][2] = 0;
-	result.m[1][3] = 0;
-	result.m[2][0] = 0;
-	result.m[2][1] = 0;
-	result.m[2][2] = scale.Z;
-	result.m[2][3] = 0;
-	result.m[3][0] = 0;
-	result.m[3][1] = 0;
-	result.m[3][2] = 0;
-	result.m[3][3] = 1;
-
-	return result;
 }
 
 Matrix4x4 MakeRotateXMatrix(float rad)
@@ -252,40 +203,22 @@ Matrix4x4 MakeAffineMatrix(const Vec3 &scale, const Matrix4x4 &roate, const Vec3
 {
 	Matrix4x4 result;
 
-	result.m[0][0] = scale.X;
-	result.m[0][1] = scale.X;
-	result.m[0][2] = scale.X;
+	result.m[0][0] = scale.X * roate.m[0][0];
+	result.m[0][1] = scale.X * roate.m[0][1];
+	result.m[0][2] = scale.X * roate.m[0][2];
 	result.m[0][3] = 0;
-	result.m[1][0] = scale.Y;
-	result.m[1][1] = scale.Y;
-	result.m[1][2] = scale.Y;
+	result.m[1][0] = scale.Y * roate.m[1][0];
+	result.m[1][1] = scale.Y * roate.m[1][1];
+	result.m[1][2] = scale.Y * roate.m[1][2];
 	result.m[1][3] = 0;
-	result.m[2][0] = scale.Z;
-	result.m[2][1] = scale.Z;
-	result.m[2][2] = scale.Z;
+	result.m[2][0] = scale.Z * roate.m[2][0];
+	result.m[2][1] = scale.Z * roate.m[2][1];
+	result.m[2][2] = scale.Z * roate.m[2][2];
 	result.m[2][3] = 0;
 	result.m[3][0] = translate.X;
 	result.m[3][1] = translate.Y;
 	result.m[3][2] = translate.Z;
 	result.m[3][3] = 1;
-
-	return result;
-}
-
-Vec3 Transform(const Vec3& vector, const Matrix4x4& matrix)
-{
-	Vec3 result;
-
-	result.X = (vector.X * matrix.m[0][0]) + (vector.Y * matrix.m[1][0]) + (vector.Z * matrix.m[2][0]) + matrix.m[3][0];
-	result.Y = (vector.X * matrix.m[0][1]) + (vector.Y * matrix.m[1][1]) + (vector.Z * matrix.m[2][1]) + matrix.m[3][1];
-	result.Z = (vector.X * matrix.m[0][2]) + (vector.Y * matrix.m[1][2]) + (vector.Z * matrix.m[2][2]) + matrix.m[3][2];
-
-	float w = (vector.X * matrix.m[0][3]) + (vector.Y * matrix.m[1][3]) + (vector.Z * matrix.m[2][3]) + matrix.m[3][3];
-	assert(w != 0.0f);
-
-	result.X /= w;
-	result.Y /= w;
-	result.Z /= w;
 
 	return result;
 }
